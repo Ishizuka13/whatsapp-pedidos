@@ -1,0 +1,11 @@
+{
+    "build": {
+      "env": {
+        "PORT": "80"
+      }
+    },
+    "deploy": {
+      "startCommand": "apache2-foreground"
+    }
+  }
+  

@@ -1,0 +1,14 @@
+FROM php:8.2-apache
+
+# Instala extensões do PHP necessárias pro MySQL
+RUN docker-php-ext-install pdo pdo_mysql
+
+# Copia arquivos do projeto pro Apache
+COPY public/ /var/www/html/
+COPY db.php /var/www/html/db.php
+
+# Dá permissões
+RUN chown -R www-data:www-data /var/www/html
+
+# Expõe a porta padrão do Apache
+EXPOSE 80
