@@ -6,7 +6,7 @@
 
 $host = getenv('HOST');
 $db   = getenv('DB');
-$user = getenv('USER');
+$user = 'root';
 $pass = getenv('PASS');
 var_dump(getenv('USER'));
 
