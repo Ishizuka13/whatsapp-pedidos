@@ -4,10 +4,11 @@
 // $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 // $dotenv->load();
 
-$host = $_ENV['HOST'];
-$db   = $_ENV['DB'];
-$user = $_ENV['USER'];
-$pass = $_ENV['PASS'];
+$host = getenv('HOST');
+$db   = getenv('DB');
+$user = getenv('USER');
+$pass = getenv('PASS');
+var_dump(getenv('USER'));
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
