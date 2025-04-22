@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 function enviarMensagemWhatsApp($numero, $mensagemTexto) {
     $token = getenv('META_VERIFY_TOKEN');
-    $phoneId = $_ENV['PHONE_NUMBER_ID'];
+    $phoneId = getenv('PHONE_NUMBER_ID');
     
     $url = "https://graph.facebook.com/v19.0/$phoneId/messages";
 
