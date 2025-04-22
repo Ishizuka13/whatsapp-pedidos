@@ -1,5 +1,5 @@
 <?php
-require_once 'db.php';
+require_once '../db.php';
 
 $stmt = $pdo->query("SELECT * FROM pedidos ORDER BY created_at DESC");
 $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
