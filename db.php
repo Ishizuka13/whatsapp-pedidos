@@ -14,5 +14,6 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     echo "Erro ao conectar ao banco: " . $e->getMessage();
+    die();
 }
 ?>

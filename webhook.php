@@ -40,6 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':mensagem' => $mensagem
                 ]);
                 error_log("Mensagem salva com sucesso!");
+
+                enviarMensagemWhatsApp($numero, "Olá! Recebemos seu pedido: \"$mensagem\"");
+
             } else {
                 error_log("Dados incompletos: número ou mensagem vazios.");
             }
@@ -54,4 +57,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Erro interno ao processar a mensagem";
     }
     exit;
+}
+
+function enviarMensagemWhatsApp($numero, $mensagemTexto) {
+    $token = getenv('META_VERIFY_TOKEN');
+    $phoneId = $_ENV['PHONE_NUMBER_ID'];
+    
+    $url = "https://graph.facebook.com/v19.0/$phoneId/messages";
+
+    $dados = [
+        'messaging_product' => 'whatsapp',
+        'to' => $numero,
+        'type' => 'text',
+        'text' => ['body' => $mensagemTexto]
+    ];
+
+    $headers = [
+        "Authorization: Bearer $token",
+        "Content-Type: application/json"
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($dados));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $resposta = curl_exec($ch);
+    $erro = curl_error($ch);
+    curl_close($ch);
+
+    if ($erro) {
+        error_log("Erro ao enviar mensagem: " . $erro);
+    } else {
+        error_log("Mensagem enviada: " . $resposta);
+    }
 }
