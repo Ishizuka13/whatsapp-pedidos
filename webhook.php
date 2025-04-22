@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
-
+print_r($input);
     $entry = $input['entry'][0] ?? null;
     $changes = $entry['changes'][0] ?? null;
     $value = $changes['value'] ?? null;
