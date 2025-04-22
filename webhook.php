@@ -1,5 +1,5 @@
 <?php
-require_once 'public/db.php';
+require_once 'db.php';
 
 $verify_token = 'meu_token_de_teste';
 
