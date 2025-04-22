@@ -17,31 +17,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
+// Recebendo a mensagem real (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
-print_r($input);
-    $entry = $input['entry'][0] ?? null;
-    $changes = $entry['changes'][0] ?? null;
-    $value = $changes['value'] ?? null;
-    $messages = $value['messages'][0] ?? null;
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
 
-    if ($messages) {
-        $from = $messages['from'];
-        $text = $messages['text']['body'];
+    if (isset($data['entry'][0]['changes'][0]['value']['messages'][0])) {
+        $msg = $data['entry'][0]['changes'][0]['value']['messages'][0];
+        $numero = $msg['from'] ?? '';
+        $mensagem = $msg['text']['body'] ?? '';
 
-        $stmt = $pdo->prepare("INSERT INTO pedidos (numero_cliente, mensagem) VALUES (?, ?)");
-        $stmt->execute([$from, $text]);
-
-        file_put_contents('mensagens.txt', "De $from: $text\n", FILE_APPEND);
-
-        $pedido = ['numero' => $from, 'mensagem' => $text, 'data' => date('Y-m-d H:i:s')];
-        $pedidos = file_exists('pedidos.json') ? json_decode(file_get_contents('pedidos.json'), true) : [];
-        $pedidos[] = $pedido;
-        file_put_contents('pedidos.json', json_encode($pedidos, JSON_PRETTY_PRINT));
+        if ($numero && $mensagem) {
+            $stmt = $pdo->prepare("INSERT INTO pedidos (numero_cliente, mensagem) VALUES (:numero, :mensagem)");
+            $stmt->execute([
+                ':numero' => $numero,
+                ':mensagem' => $mensagem
+            ]);
+        }
     }
 
-    http_response_code(200);
-    echo 'OK';
+    echo "Mensagem recebida";
     exit;
 }
 ?>
