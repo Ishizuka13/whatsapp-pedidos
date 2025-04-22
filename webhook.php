@@ -1,7 +1,7 @@
 <?php
 require_once 'db.php';
 
-$verify_token = 'meu_token_de_teste';
+$verify_token = getenv('META_VERIFY_TOKEN'); // Adicione no painel do Railway
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $mode = $_GET['hub_mode'] ?? '';
