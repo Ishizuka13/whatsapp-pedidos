@@ -19,24 +19,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 // Recebendo a mensagem real (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = file_get_contents('php://input');
-    $data = json_decode($input, true);
+    try {
+        $input = file_get_contents('php://input');
+        error_log("Entrada recebida: " . $input); // Log para debug
 
-    if (isset($data['entry'][0]['changes'][0]['value']['messages'][0])) {
-        $msg = $data['entry'][0]['changes'][0]['value']['messages'][0];
-        $numero = $msg['from'] ?? '';
-        $mensagem = $msg['text']['body'] ?? '';
+        $data = json_decode($input, true);
 
-        if ($numero && $mensagem) {
-            $stmt = $pdo->prepare("INSERT INTO pedidos (numero_cliente, mensagem) VALUES (:numero, :mensagem)");
-            $stmt->execute([
-                ':numero' => $numero,
-                ':mensagem' => $mensagem
-            ]);
+        if (isset($data['entry'][0]['changes'][0]['value']['messages'][0])) {
+            $msg = $data['entry'][0]['changes'][0]['value']['messages'][0];
+            $numero = $msg['from'] ?? '';
+            $mensagem = $msg['text']['body'] ?? '';
+
+            error_log("Número: $numero");
+            error_log("Mensagem: $mensagem");
+
+            if ($numero && $mensagem) {
+                $stmt = $pdo->prepare("INSERT INTO pedidos (numero_cliente, mensagem) VALUES (:numero, :mensagem)");
+                $stmt->execute([
+                    ':numero' => $numero,
+                    ':mensagem' => $mensagem
+                ]);
+                error_log("Mensagem salva com sucesso!");
+            } else {
+                error_log("Dados incompletos: número ou mensagem vazios.");
+            }
+        } else {
+            error_log("Estrutura de mensagem não encontrada.");
         }
-    }
 
-    echo "Mensagem recebida";
+        echo "Mensagem recebida";
+    } catch (Exception $e) {
+        error_log("Erro ao processar webhook: " . $e->getMessage());
+        http_response_code(500);
+        echo "Erro interno ao processar a mensagem";
+    }
     exit;
 }
-?>
