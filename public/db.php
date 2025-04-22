@@ -8,7 +8,6 @@ $host = getenv('HOST');
 $db   = getenv('DB');
 $user = 'root';
 $pass = getenv('PASS');
-var_dump(getenv('USER'));
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
