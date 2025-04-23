@@ -41,7 +41,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
                 error_log("Mensagem salva com sucesso!");
 
-                enviarMensagemWhatsApp($numero, "Olá! Recebemos seu pedido: \"$mensagem\"");
+                $cardapio = $pdo->query("SELECT item, preco FROM cardapio")->fetchAll(PDO::FETCH_ASSOC);
+
+                enviarMensagemWhatsApp($numero, "Olá! Este é o nosso cardápio: \n\n" . implode("\n", array_map(function ($item) {
+                    return $item['item'] . " - R$ " . $item['preco'];
+                }, $cardapio)));
 
             } else {
                 error_log("Dados incompletos: número ou mensagem vazios.");
