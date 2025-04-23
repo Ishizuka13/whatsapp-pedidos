@@ -70,7 +70,7 @@ $cardapio = $stmt->fetchAll();
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
         }
         table {
             width: 100%;
@@ -117,6 +117,12 @@ $cardapio = $stmt->fetchAll();
     </style>
 </head>
 <body>
+
+    <?php
+    $title = 'Cardápio';
+    require_once '../components/header/index.php'; ?>
+
+
     <h2>Cardápio</h2>
 
 

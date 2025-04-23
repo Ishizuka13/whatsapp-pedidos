@@ -34,6 +34,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log("Mensagem: $mensagem");
 
             if ($numero && $mensagem) {
+                [$item, $quantidade] = explode(", ", $mensagem);
+
+                $cardapio = $pdo->query("SELECT id, item, preco FROM cardapio")->fetchAll(PDO::FETCH_ASSOC);
+
+                $item_pedido = array_search($item, array_column($cardapio, 'item'));
+                
+                if($item_pedido !== false) {
+                    $stmt = $pdo->prepare("INSERT INTO pedidos_feitos (item_id, quantidade, valor_unitario) VALUES (:item_id, :quantidade, :valor_unitario)");
+                    $stmt->execute([
+                        ':item_id' => $item_pedido['item_id'],
+                        ':quantidade' => $quantidade,
+                        ':valor_unitario' => $item_pedido['valor_unitario']
+                    ]);
+                    
+                    $mensagem = "O item $mensagem foi adicionado ao seu pedido.";
+                }
+
                 $stmt = $pdo->prepare("INSERT INTO pedidos (numero_cliente, mensagem) VALUES (:numero, :mensagem)");
                 $stmt->execute([
                     ':numero' => $numero,
@@ -43,9 +60,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $cardapio = $pdo->query("SELECT item, preco FROM cardapio")->fetchAll(PDO::FETCH_ASSOC);
 
-                enviarMensagemWhatsApp($numero, "Olá! Este é o nosso cardápio: \n\n" . implode("\n", array_map(function ($item) {
+                $mensagem = "Olá! Este é o nosso cardápio: \n\n" . implode("\n", array_map(function ($item) {
                     return $item['item'] . " - R$ " . $item['preco'];
-                }, $cardapio)));
+                }, $cardapio)) . "\n\n A seguir, envie o item desejado com a quantidade desejada.";
+                
+                enviarMensagemWhatsApp($numero, $mensagem);
+
+                $mensagem = "Para selecionar uma opção, envie o item desejado com a quantidade desejada seguindo o exemplo abaixo:\n\nExemplo: $cardapio[0]['item'], 2.";
+
+                enviarMensagemWhatsApp($numero, $mensagem);
 
             } else {
                 error_log("Dados incompletos: número ou mensagem vazios.");

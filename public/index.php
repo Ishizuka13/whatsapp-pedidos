@@ -11,7 +11,14 @@ $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <title>Pedidos por WhatsApp</title>
   <link rel="stylesheet" href="../style.css">
 </head>
+
 <body>
+
+  <?php 
+  $title = 'Pedidos por WhatsApp';
+  require_once '../components/header/index.php'; ?>
+
+
   <div class="container">
     <h1>📦 Pedidos Recebidos pelo WhatsApp</h1>
     <?php if (count($pedidos) === 0): ?>
