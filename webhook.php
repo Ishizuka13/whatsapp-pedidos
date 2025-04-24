@@ -66,7 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 enviarMensagemWhatsApp($numero, $mensagem);
 
-                $mensagem = "Para selecionar uma opção, envie o item desejado com a quantidade desejada seguindo o exemplo abaixo:\n\nExemplo: $cardapio[0]['item'], 2.";
+                $item_exemplo = $cardapio[0]['item'];
+
+                $mensagem = "Para selecionar uma opção, envie o item desejado com a quantidade desejada seguindo o exemplo abaixo:\n\nExemplo: $item_exemplo, 2.";
 
                 enviarMensagemWhatsApp($numero, $mensagem);
 
